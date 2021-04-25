@@ -189,7 +189,14 @@ int deleteLast(listNode* h) {
  * list 처음에 key에 대한 노드하나를 추가
  */
 int insertFirst(listNode* h, int key) {
+    listNode* node = (listNode*)malloc(sizeof(listNode)); //삽입할 새로운 노드의 동적 메모리 할당
+	node->key = key; //새로운 노드의 데이터필드에 key 저장
+	
+	node->rlink = h->rlink;  //headNode의 rlink를 새로운 노드의 rlink에 저장
+	node->llink = h;  //headNode를 새로운 노드의 llink에 저장
 
+	h->rlink->llink = node;  //새로운 노드의 주소를 headNode의 rlink의 llink에 저장
+	h->rlink = node;  //새로운 노드의 주소를 headNode의 rlink에 저장
 
 	return 1;
 }
@@ -198,10 +205,17 @@ int insertFirst(listNode* h, int key) {
  * list의 첫번째 노드 삭제
  */
 int deleteFirst(listNode* h) {
+    listNode* deleted = h->rlink;  //headNode의 rlink를 가리키는 노드를 할당
 
+	if (deleted == h) {  //deleted노드가 headNode인 경우
+		return 0;
+	}
+
+	h->rlink = h->rlink->rlink;  //headNode의 rlink의 llink를 headNode의 rlink에 저장
+	h->rlink->llink = h;  //headNode를 headNode의 rlink의 llink에 저장
+	free(deleted);  //deleted 메모리 할당 해제
 
 	return 1;
-
 }
 
 
