@@ -13,11 +13,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 /* 필요한 헤더파일 추가 */
-
+//연결 리스트의 노드 구조를 구조체로 정의
 typedef struct Node {
 	int key;
-	struct Node* llink;
-	struct Node* rlink;
+	struct Node* llink;  //왼쪽(이전) 노드에 대한 링크
+	struct Node* rlink;  //오른쪽(다음) 노드에 대한 링크
 } listNode;
 
 /* 함수 리스트 */
@@ -39,6 +39,7 @@ void printList(listNode* h);
 int main()
 {
 	char command;
+    printf("[----- [김현민]  [2018038088] -----]\n");
 	int key;
 	listNode* headnode=NULL;
 
@@ -108,11 +109,11 @@ int main()
 
 int initialize(listNode** h) {
 
-	/* headNode가 NULL이 아니면, freeNode를 호출하여 할당된 메모리 모두 해제 */
+	// headNode가 null이 아니면, freeNode를 호출하여 할당된 메모리 모두 해제 
 	if(*h != NULL)
 		freeList(*h);
 
-	/* headNode에 대한 메모리를 할당하여 리턴 */
+	// headNode에 대한 메모리를 할당하여 다시 리턴
 	*h = (listNode*)malloc(sizeof(listNode));
 	(*h)->rlink = *h;
 	(*h)->llink = *h;
@@ -122,6 +123,15 @@ int initialize(listNode** h) {
 
 /* 메모리 해제 */
 int freeList(listNode* h){
+    listNode* p = h;  //p는 headNode가 가리키는 노드를 할당
+
+	listNode* prev = NULL;  //prev 노드를 초기화
+	while(p != NULL) {
+		prev = p;
+		p = p->rlink;
+		free(prev);  //prev의 메모리 할당 해제
+	}
+	free(h); //headNode의 메모리 할당 해제
 
 	return 0;
 }
@@ -134,12 +144,12 @@ void printList(listNode* h) {
 
 	printf("\n---PRINT\n");
 
-	if(h == NULL) {
+	if(h == NULL) {  //headNode가 null인 경우
 		printf("Nothing to print....\n");
 		return;
 	}
 
-	p = h->rlink;
+	p = h->rlink;  //headNode의 rlink를 p에 저장
 
 	while(p != NULL && p != h) {
 		printf("[ [%d]=%d ] ", i, p->key);
@@ -149,7 +159,7 @@ void printList(listNode* h) {
 	printf("  items = %d\n", i);
 
 
-	/* print addresses */
+	//메모리 주소 출력
 	printf("\n---checking addresses of links\n");
 	printf("-------------------------------\n");
 	printf("head node: [llink]=%p, [head]=%p, [rlink]=%p\n", h->llink, h, h->rlink);
