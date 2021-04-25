@@ -239,7 +239,17 @@ int deleteFirst(listNode* h) {
  * 리스트의 링크를 역순으로 재 배치
  */
 int invertList(listNode* h) {
-
+    listNode* nextNode = NULL;  //다음 위치를 참조하는 할당
+	listNode* currentNode = h;  //현재 위치를 참조하는 할당
+	listNode* preNode = NULL;  //이전 위치를 참조하는 할당
+    
+    while (currentNode) {  //currentNode인 경우
+    	nextNode = currentNode -> rlink;  //currentNode의 rlink를 nextNode에 저장
+        currentNode -> rlink = preNode;  //preNode를 currentNode의 rlink에 저장
+        preNode = currentNode;  //currentNode를 preNode에 저장
+        currentNode = nextNode;  //nextNode를 currentNode에 저장
+    }
+    h = preNode; //preNode를 headNode로 역순을 시켜줌
 
 	return 0;
 }
@@ -250,6 +260,29 @@ int invertList(listNode* h) {
  *  리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 
  **/
 int insertNode(listNode* h, int key) {
+    listNode* preNode = h;  //headNode를 가리키는 노드를 할당
+    listNode* node = (listNode*)malloc(sizeof(listNode));  //삽입할 새로운 노드의 동적 메모리 할당
+	node->key = key;  //새로운 노드의 데이터필드에 key 저장
+
+    if (h == NULL) {  //headNode가 null인 경우
+        h->rlink = node;  //새로운 노드의 주소를 headNode의 rlink에 저장
+    }
+    else {  //headNode가 null이 아닌 경우
+		if (node->key < h->key) {  //삽입할 위치가 맨 앞인 경우
+			node->rlink = h->rlink;  //headNode의 rlink를 새로운 노드의 rlink에 저장
+            h->rlink = node;  //새로운 노드의 주소를 headNode의 rlinK에 저장
+        }
+        else {
+            while (preNode->rlink) {  //preNode의 rlink인 경우
+				if (node->key < preNode->rlink->key) {  //삽입할 위치 찾기
+					break;
+				}
+                preNode = preNode->rlink;  //preNode의 rlink를 preNode에 저장
+            }
+            node->rlink = preNode->rlink;  //preNode의 rlink를 새로운 노드의 rlink에 저장
+            preNode->rlink = node;  //새로운 노드의 주소를 preNode의 rlinK에 저장
+        }
+    }
 
 	return 0;
 }
@@ -259,6 +292,26 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
+    listNode* p, * deleted;
+
+    if (h->key == key) {  //headNode가 가리키는 key가 key값과 동일한 경우
+        deleted = h;  //headNode를 deleted에 저장
+        h = h->rlink;  //headNode의 rlink를 headNodek에 저장
+        free(deleted);  //deleted 메모리 할당 해제
+    }
+    else {
+        p = h;
+        while (p->rlink) {
+            if (key == p->rlink->key) {  //삭제할 위치 찾기
+                deleted = p->rlink;  //p의 rlink를 deleted에 저장
+                p->rlink = p->rlink->rlink;  //p의 rlink의 rlink를 p의 rlink에 저장
+                free(deleted);  //deleted 메모리 할당 해제
+
+                return 0;
+            }
+            p = p->rlink; //p의 rlink를 p에 저장
+        }
+    }
 
 	return 0;
 }
